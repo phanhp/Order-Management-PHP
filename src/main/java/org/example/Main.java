@@ -27,8 +27,8 @@ public class Main {
 //        orderDetailsNow.setOrders(orderNow);
 //        orderDetailsRepository.save(orderDetailsNow);
 //        printListOfOrder(action.findOrderByCurrentMonth());
-//        printListOfOrder(action.findOrderWhichTotalBuyGreaterOrEqualThan(1000));
-        printListOfOrder(action.findOrderWhichPurchaseProduct("product04"));
+        printListOfOrder(action.findOrderWhichTotalBuyGreaterOrEqualThan(1000));
+//        printListOfOrder(action.findOrderWhichPurchaseProduct("product04"));
     }
 
 

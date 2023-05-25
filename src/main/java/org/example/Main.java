@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
         Main action = new Main();
 //        action.createTestData();
-        action.createNewOrder(LocalDate.now(), "Customer-now", "Customer-now-address", "product08", 3, 134.93);
+        action.createNewOrder(LocalDate.now(), "Customer-new", "Customer-new-address", "product08", -2, 124.93);
 //        printListOfOrder(action.findAllOrder());
 //        printListOfOrder(action.findOrderByCurrentMonth());
 //        printListOfOrder(action.findOrderWhichTotalBuyGreaterOrEqualThan(1000));
@@ -139,14 +139,14 @@ public class Main {
                 for (int j = 0; j < orderDetailsList.size(); j++) {
                     if (orderDetails.getProductName().equalsIgnoreCase(orderDetailsList.get(j).getProductName()) && orderDetails.getUnitPrice() == orderDetailsList.get(j).getUnitPrice()) {
                         int oldQuantity = orderDetailsList.get(j).getQuantity();
-                        if (quantity >= 0) {
+                        if (quantity > 0) {
                             updateOrderDetailsQuantity((oldQuantity + quantity), orderDetailsList.get(j));
                             System.out.println(allOrderList.get(i).getCustomerName() + " purchase " + quantity + " more of " + productName);
-                            System.out.println("New order detail is: Product-name: " + productName + " Quantity: " + (oldQuantity + quantity) + " Unit-price: " + unitPrice);
-                        } else if (quantity < 0 && quantity + oldQuantity >= 0) {
+                            System.out.println("New order detail is: Product-name: " + productName + ", Quantity: " + (oldQuantity + quantity) + ", Unit-price: " + unitPrice);
+                        } else if (quantity <= 0 && quantity + oldQuantity >= 0) {
                             updateOrderDetailsQuantity((oldQuantity + quantity), orderDetailsList.get(j));
                             System.out.println(allOrderList.get(i).getCustomerName() + " return " + (quantity*-1) + " of " + productName);
-                            System.out.println("New order detail is: Product-name: " + productName + " Quantity: " + (oldQuantity + quantity) + " Unit-price: " + unitPrice);
+                            System.out.println("New order detail is: Product-name: " + productName + ", Quantity: " + (oldQuantity + quantity) + ", Unit-price: " + unitPrice);
                         } else {
                             System.out.println("Invalid return item");
                         }
@@ -155,22 +155,30 @@ public class Main {
                 }
 
                 if (count1 == 0) {
-                    orderDetails.setOrders(allOrderList.get(i));
-                    orderDetailsRepository.save(orderDetails);
-                    System.out.println("New order detail with: Product-name: " + productName + " Quantity: " + quantity + " Unit-price: " + unitPrice + " is saved");
-                }
+                    if (quantity >0) {
+                        orderDetails.setOrders(allOrderList.get(i));
+                        orderDetailsRepository.save(orderDetails);
+                        System.out.println("New order detail with: Product-name: " + productName + ", Quantity: " + quantity + ", Unit-price: " + unitPrice + " is saved");
+                    }else{
+                        System.out.println("Invalid quantity input");
+                    }
+                    }
 
                 count++;
             }
         }
 
         if (count == 0) {
-            int count1 = 0;
-            ordersRepository.save(order);
-            orderDetails.setOrders(order);
-            orderDetailsRepository.save(orderDetails);
-            System.out.println("New order set successfully");
-            System.out.println("New order detail with: Product-name: " + productName + " Quantity: " + quantity + " Unit-price: " + unitPrice + " is saved");
+            if (quantity>0) {
+                int count1 = 0;
+                ordersRepository.save(order);
+                orderDetails.setOrders(order);
+                orderDetailsRepository.save(orderDetails);
+                System.out.println("New order set successfully");
+                System.out.println("New order detail with: Product-name: " + productName + " Quantity: " + quantity + " Unit-price: " + unitPrice + " is saved");
+            }else{
+                System.out.println("Invalid quantity input");
+            }
         }
     }
 

@@ -84,11 +84,9 @@ public class OrderDetailsEntity {
 
     @Override
     public String toString() {
-        return "{" +
-                "orderDetailId=" + orderDetailsId +
+        return "orderDetailId=" + orderDetailsId +
                 ", productName='" + productName + '\'' +
                 ", quantity=" + quantity +
-                ", unitPrice=" + unitPrice +
-                '}';
+                ", unitPrice=" + unitPrice+"___";
     }
 }

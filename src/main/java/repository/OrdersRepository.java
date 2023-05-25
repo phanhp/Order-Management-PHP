@@ -14,7 +14,7 @@ public interface OrdersRepository extends CrudRepository<OrdersEntity, Integer> 
     List<OrdersEntity> findAllOrders();
 
     @Query (value = "Select * from orders where order_id = ?1", nativeQuery = true)
-    OrdersEntity findOrderById();
+    OrdersEntity findOrderById(int orderId);
 
     @Query (value = "Select * from orders where month(order_date) = month(now()) and year(order_date) = year(now())",nativeQuery = true)
     List<OrdersEntity> findOrderByCurrentMonth();

@@ -83,15 +83,13 @@ public class OrdersEntity {
     }
 
 
-
     @Override
     public String toString() {
-        return "OrdersEntity{" +
-                "orderId=" + orderId +
+        return "orderId=" + orderId +
                 ", orderDate=" + orderDate +
                 ", customerName='" + customerName + '\'' +
                 ", customerAddress='" + customerAddress + '\'' +
-                ", orderDetails=" + orderDetails.toString() +
-                '}';
+                ", orderDetails=" + orderDetails.toString();
     }
+
 }

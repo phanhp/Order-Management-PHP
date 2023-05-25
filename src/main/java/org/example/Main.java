@@ -22,21 +22,13 @@ public class Main {
     public static void main(String[] args) {
         Main action = new Main();
 //        action.createTestData();
-        action.createNewOrder(LocalDate.now(), "Customer-new", "Customer-new-address", "product08", -2, 124.93);
-//        printListOfOrder(action.findAllOrder());
-//        printListOfOrder(action.findOrderByCurrentMonth());
-//        printListOfOrder(action.findOrderWhichTotalBuyGreaterOrEqualThan(1000));
-//        printListOfOrder(action.findOrderWhichPurchaseProduct("product04"));
+//        action.createNewOrder(LocalDate.now(), "Customer-new", "Customer-new-address", "product08", 2, 124.93);
+//        action.findAllOrder();
+//        action.findOrderByOrderId(6);
+//        action.findOrderByCurrentMonth();
+//        action.findOrderWhichTotalBuyGreaterOrEqualThan(1300);
+        action.findOrderWhichPurchaseProduct("product04");
     }
-
-
-    //Print
-    private static void printListOfOrder(List<OrdersEntity> ordersList) {
-        for (int i = 0; i < ordersList.size(); i++) {
-            System.out.println(ordersList.get(i).toString());
-        }
-    }
-
     private static OrderDetailsEntity createNewOrderDetails(String productName, int quantity, double unitPrice) {
         return new OrderDetailsEntity(productName, quantity, unitPrice);
     }
@@ -113,11 +105,11 @@ public class Main {
 
     }
 
-    public OrderDetailsEntity findOrderDetailsByOrderDetailsId(int orderDetailsId){
+    public OrderDetailsEntity findOrderDetailsByOrderDetailsId(int orderDetailsId) {
         return (OrderDetailsEntity) orderDetailsRepository.findOrderDetailsByOrderDetailsId(orderDetailsId);
     }
 
-    public int findOrderIdOfOrderDetails(OrderDetailsEntity orderDetails){
+    public int findOrderIdOfOrderDetails(OrderDetailsEntity orderDetails) {
         return orderDetails.getOrders().getOrderId();
     }
 
@@ -145,38 +137,41 @@ public class Main {
                             System.out.println("New order detail is: Product-name: " + productName + ", Quantity: " + (oldQuantity + quantity) + ", Unit-price: " + unitPrice);
                         } else if (quantity <= 0 && quantity + oldQuantity >= 0) {
                             updateOrderDetailsQuantity((oldQuantity + quantity), orderDetailsList.get(j));
-                            System.out.println(allOrderList.get(i).getCustomerName() + " return " + (quantity*-1) + " of " + productName);
+                            System.out.println(allOrderList.get(i).getCustomerName() + " return " + (quantity * -1) + " of " + productName);
                             System.out.println("New order detail is: Product-name: " + productName + ", Quantity: " + (oldQuantity + quantity) + ", Unit-price: " + unitPrice);
                         } else {
                             System.out.println("Invalid return item");
                         }
                         count1++;
+                        break;
                     }
                 }
 
                 if (count1 == 0) {
-                    if (quantity >0) {
+                    if (quantity > 0) {
                         orderDetails.setOrders(allOrderList.get(i));
                         orderDetailsRepository.save(orderDetails);
                         System.out.println("New order detail with: Product-name: " + productName + ", Quantity: " + quantity + ", Unit-price: " + unitPrice + " is saved");
-                    }else{
+                    } else {
                         System.out.println("Invalid quantity input");
                     }
-                    }
+                }
 
                 count++;
+                break;
             }
         }
 
         if (count == 0) {
-            if (quantity>0) {
+            if (quantity > 0) {
                 int count1 = 0;
                 ordersRepository.save(order);
                 orderDetails.setOrders(order);
                 orderDetailsRepository.save(orderDetails);
                 System.out.println("New order set successfully");
+                System.out.println("New order with: Customer-name: "+customerName+", Customer-address: "+customerAddress+", Date: "+orderDate.toString());
                 System.out.println("New order detail with: Product-name: " + productName + " Quantity: " + quantity + " Unit-price: " + unitPrice + " is saved");
-            }else{
+            } else {
                 System.out.println("Invalid quantity input");
             }
         }
@@ -184,27 +179,67 @@ public class Main {
 
     //Find all orders
     public List<OrdersEntity> findAllOrder() {
-        return (List<OrdersEntity>) ordersRepository.findAllOrders();
+        List<OrdersEntity> ordersList = (List<OrdersEntity>) ordersRepository.findAllOrders();
+        System.out.println("There are " + ordersList.size() + " orders in the list");
+        if (ordersList.size() != 0) {
+            System.out.println("Orders List Detail: ");
+            for (int i = 0; i < ordersList.size(); i++) {
+                System.out.println(ordersList.get(i).toString());
+            }
+        }
+        return ordersList;
     }
 
-    //Find an order and order details by order_id
+    //Find an order by order_id
     public OrdersEntity findOrderByOrderId(int orderId) {
-        return (OrdersEntity) ordersRepository.findOrderById();
+        try {
+            OrdersEntity order = (OrdersEntity) ordersRepository.findOrderById(orderId);
+            System.out.println("The selected order is:");
+            System.out.println("   " + order.toString());
+            return order;
+        } catch (Exception e) {
+            System.out.println("   Can not find selected order");
+            return null;
+        }
     }
 
     //Find all order in current month
     public List<OrdersEntity> findOrderByCurrentMonth() {
-        return (List<OrdersEntity>) ordersRepository.findOrderByCurrentMonth();
+        List<OrdersEntity> ordersList = (List<OrdersEntity>) ordersRepository.findOrderByCurrentMonth();
+        System.out.println("There are " + ordersList.size() + " orders in the list");
+        if (ordersList.size() != 0) {
+            System.out.println("Orders List Detail: ");
+            for (int i = 0; i < ordersList.size(); i++) {
+                System.out.println(ordersList.get(i).toString());
+            }
+        }
+        return ordersList;
     }
 
     //List of total buy greater than
     public List<OrdersEntity> findOrderWhichTotalBuyGreaterOrEqualThan(double money) {
-        return (List<OrdersEntity>) ordersRepository.findOrderWithTotalBuyGreaterOrEqualThan(money);
+        List<OrdersEntity> ordersList = (List<OrdersEntity>) ordersRepository.findOrderWithTotalBuyGreaterOrEqualThan(money);
+        System.out.println("There are " + ordersList.size() + " orders in the list");
+        if (ordersList.size() != 0) {
+            System.out.println("Orders List Detail: ");
+            for (int i = 0; i < ordersList.size(); i++) {
+                System.out.println(ordersList.get(i).toString());
+            }
+        }
+        return ordersList;
     }
 
     //List of customer that purchase a product
     public List<OrdersEntity> findOrderWhichPurchaseProduct(String productName) {
-        return (List<OrdersEntity>) ordersRepository.findOrderWhichPurchaseProduct(productName);
+        List<OrdersEntity> ordersList = (List<OrdersEntity>) ordersRepository.findOrderWhichPurchaseProduct(productName);
+        System.out.println("There are " + ordersList.size() + " orders in the list");
+        if (ordersList.size() != 0) {
+            System.out.println("Orders List Detail: ");
+            for (int i = 0; i < ordersList.size(); i++) {
+                System.out.println(ordersList.get(i).toString());
+            }
+        }
+        return ordersList;
     }
 
 }

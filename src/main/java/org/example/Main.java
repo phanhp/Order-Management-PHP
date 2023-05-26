@@ -29,6 +29,7 @@ public class Main {
 //        action.findOrderWhichTotalBuyGreaterOrEqualThan(1300);
         action.findOrderWhichPurchaseProduct("product04");
     }
+
     private static OrderDetailsEntity createNewOrderDetails(String productName, int quantity, double unitPrice) {
         return new OrderDetailsEntity(productName, quantity, unitPrice);
     }
@@ -113,6 +114,20 @@ public class Main {
         return orderDetails.getOrders().getOrderId();
     }
 
+    public boolean isOrderRepeat(OrdersEntity order1, OrdersEntity order2) {
+        if (order1.getOrderDate().equals(order2.getOrderDate()) && order1.getCustomerName().equalsIgnoreCase(order2.getCustomerName())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isOrderDetailsRepeat(OrderDetailsEntity orderDetails1, OrderDetailsEntity orderDetails2) {
+        if (orderDetails1.getUnitPrice() == orderDetails2.getUnitPrice() && orderDetails1.getProductName().equalsIgnoreCase(orderDetails2.getProductName())) {
+            return true;
+        }
+        return false;
+    }
+
     //Allow for users to create new order
     public void createNewOrder(LocalDate orderDate, String customerName, String customerAddress, String productName, int quantity, double unitPrice) {
         Main action = new Main();
@@ -123,13 +138,13 @@ public class Main {
 
         int count = 0;
         for (int i = 0; i < allOrderList.size(); i++) {
-            if (order.getOrderDate().equals(allOrderList.get(i).getOrderDate()) && order.getCustomerName().equalsIgnoreCase(allOrderList.get(i).getCustomerName())) {
+            if (isOrderRepeat(order, allOrderList.get(i)) == true) {
                 System.out.println("The order's already set in the past");
 
                 List<OrderDetailsEntity> orderDetailsList = (List<OrderDetailsEntity>) orderDetailsRepository.findOrderDetailsByOrderId(allOrderList.get(i).getOrderId());
                 int count1 = 0;
                 for (int j = 0; j < orderDetailsList.size(); j++) {
-                    if (orderDetails.getProductName().equalsIgnoreCase(orderDetailsList.get(j).getProductName()) && orderDetails.getUnitPrice() == orderDetailsList.get(j).getUnitPrice()) {
+                    if (isOrderDetailsRepeat(orderDetails, orderDetailsList.get(j))==true) {
                         int oldQuantity = orderDetailsList.get(j).getQuantity();
                         if (quantity > 0) {
                             updateOrderDetailsQuantity((oldQuantity + quantity), orderDetailsList.get(j));
@@ -169,7 +184,7 @@ public class Main {
                 orderDetails.setOrders(order);
                 orderDetailsRepository.save(orderDetails);
                 System.out.println("New order set successfully");
-                System.out.println("New order with: Customer-name: "+customerName+", Customer-address: "+customerAddress+", Date: "+orderDate.toString());
+                System.out.println("New order with: Customer-name: " + customerName + ", Customer-address: " + customerAddress + ", Date: " + orderDate.toString());
                 System.out.println("New order detail with: Product-name: " + productName + " Quantity: " + quantity + " Unit-price: " + unitPrice + " is saved");
             } else {
                 System.out.println("Invalid quantity input");
